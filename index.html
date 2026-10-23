@@ -259,54 +259,89 @@ button.imgBtn:focus-visible{
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,.45);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       z-index: 5;
       user-select:none;
+      padding: 12px;
     }
     .overlay.show{
       display:flex;
+      animation: overlayFade .35s ease-out both;
     }
     .overlayCard{
-      padding: 18px 22px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.14);
-      box-shadow: 0 16px 34px rgba(0,0,0,.35);
+      width: min(390px, 92%);
+      max-height: 95%;
+      padding: 16px 18px 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.16));
+      box-shadow: 0 20px 44px rgba(0,0,0,.42);
+      border: 2px solid rgba(255,255,255,.16);
       text-align:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      transform-origin:center center;
+      animation: cardPop .55s cubic-bezier(.2,.9,.2,1.08) both;
+    }
+    .clearLead{
+      font-size: clamp(20px, 5vw, 30px);
+      font-weight: 900;
+      letter-spacing: .06em;
+      color: #fff7a8;
+      text-shadow: 0 2px 0 rgba(0,0,0,.15), 0 0 18px rgba(255, 227, 84, .45);
+      margin: 0 0 8px;
+      font-family: "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4", "Yu Gothic", "Meiryo", sans-serif;
     }
     .clearImg{
-      width: min(340px, 78vw);
+      width: min(420px, 92vw);
+      max-height: min(310px, 58vw);
+      max-width: 100%;
       height: auto;
       display:block;
       margin: 0 auto;
-    }
-    .overlaySub{
-      margin-top: 10px;
-      font-size: 13px;
-      opacity: .95;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
+      animation: clearBounce .7s .08s cubic-bezier(.18,.9,.28,1.2) both;
     }
     .playAgainBtn{
-      display: block;
+      display:block;
       width: 100%;
-      margin-top: 12px;
-      padding: 12px 14px;
-      font-size: clamp(14px, 4vw, 18px);
-      background: var(--btnBg);
-      color: var(--btnText);
+      margin-top: 16px;
+      padding: 14px 16px;
+      min-height: 56px;
+      font-size: clamp(18px, 4.5vw, 24px);
+      font-weight: 900;
+      color: #083a34;
+      background: linear-gradient(180deg, #41dfc7, #24c0aa);
+      border-radius: 16px;
+      border: 2px solid rgba(255,255,255,.36);
+      box-shadow: 0 10px 18px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.25);
+      transform: translateY(8px);
+      opacity: 0;
+      animation: buttonRise .42s .35s ease-out forwards;
     }
-    .overlayCard{
-      width: min(350px, 88%);
-      max-height: 95%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    .playAgainBtn:hover{ filter: brightness(1.03); }
+    .playAgainBtn:focus-visible{ outline: 3px solid #fff; outline-offset: 3px; }
+    @keyframes overlayFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
-    .clearImg{
-      max-height: min(240px, 48vw);
-      max-width: 100%;
-      object-fit: contain;
+    @keyframes cardPop {
+      0% { opacity: 0; transform: scale(.82) translateY(16px); }
+      65% { opacity: 1; transform: scale(1.04) translateY(0); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes clearBounce {
+      0% { opacity: 0; transform: scale(.7) rotate(-5deg); }
+      55% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    @keyframes buttonRise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
 
@@ -412,8 +447,9 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
     <div class="boardWrap">
       <div class="overlay" id="clearOverlay" aria-hidden="true">
         <div class="overlayCard">
+          <div class="clearLead">せいかい！</div>
           <!-- ★ ここが画像CLEAR -->
-          <img src="images/clear.png" alt="CLEAR!" class="clearImg">
+          <img src="images/clear.png" alt="やったー！" class="clearImg">
           <button id="btnPlayAgain" class="playAgainBtn" type="button">もう一度あそぶ</button>
         </div>
       </div>
@@ -478,7 +514,7 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
 
     
     let clearShowTimer = null;
-    const CLEAR_SHOW_DELAY = 900;   // 正解後、表示するまで(ms)
+    const CLEAR_SHOW_DELAY = 650;   // 正解後、表示するまで(ms)
     let player = Array(9).fill(null);
     let answer = Array(9).fill(1);
     let targetTop = [0,0,0];
