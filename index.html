@@ -355,6 +355,32 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
 #infoView {padding-bottom:env(safe-area-inset-bottom);}
 @media(max-width:420px) { .status-left {font-size:15px;} #levelSelect {font-size:19px;} }
 
+
+/* ===== 公開版：3つの大きな難易度ボタン ===== */
+.app { width:min(560px, 100%); padding:10px 8px max(24px,env(safe-area-inset-bottom)); }
+.controls { margin:8px 0 10px; }
+.difficulty { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin:0 0 12px; }
+button.difficultyBtn {
+  min-width:0; min-height:61px; padding:10px 2px;
+  font-family:"Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN W4", "UD デジタル 教科書体 NP-B", "Yu Gothic", "Meiryo", sans-serif;
+  font-size:clamp(18px,4.8vw,27px); font-weight:900; line-height:1.2;
+  color:#242424; border:3px solid transparent; border-radius:12px;
+  box-shadow:0 3px 6px rgba(0,0,0,.18);
+  white-space:nowrap; touch-action:manipulation;
+}
+button.difficultyBtn.easy { background:#ffc72b; }
+button.difficultyBtn.normal { background:#91d356; }
+button.difficultyBtn.hard { background:#ce9afa; }
+button.difficultyBtn.is-selected {
+  border-color:#ffffff;
+  box-shadow:0 0 0 3px #145b52, 0 4px 9px rgba(0,0,0,.32);
+}
+button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px; }
+@media (max-width:360px) {
+  .difficulty { gap:6px; }
+  button.difficultyBtn { font-size:clamp(16px,4.8vw,19px); min-height:57px; border-radius:9px; }
+}
+
   </style>
 </head>
 
@@ -377,19 +403,10 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
 </div>
 
 
-    <div class="statusbar">
-      <div class="status-left">
-        <span class="chip" id="chipLevel">むずかしさ：ふつう</span>
-        <span class="chip" id="chipMoves">タップ：0回</span>
-        <span class="clear" id="clearBadge">CLEAR!</span>
-      </div>
-      <div class="status-right">
-        <select id="levelSelect" aria-label="難易度">
-          <option value="easy">かんたん</option>
-          <option value="normal" selected>ふつう</option>
-          <option value="hard">むずかしい</option>
-        </select>
-      </div>
+    <div class="difficulty" role="group" aria-label="むずかしさをえらぶ">
+      <button type="button" class="difficultyBtn easy" data-level="easy" aria-pressed="false">かんたん</button>
+      <button type="button" class="difficultyBtn normal is-selected" data-level="normal" aria-pressed="true">ふつう</button>
+      <button type="button" class="difficultyBtn hard" data-level="hard" aria-pressed="false">むずかしい</button>
     </div>
 
     <div class="boardWrap">
@@ -456,13 +473,10 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
     const topEls = [0,1,2].map(i => document.getElementById("tTop"+i));
     const leftEls = [0,1,2].map(i => document.getElementById("tLeft"+i));
 
-    const levelSelect = document.getElementById("levelSelect");
-    const chipLevel = document.getElementById("chipLevel");
-    const chipMoves = document.getElementById("chipMoves");
+    let selectedLevel = "normal";
     const clearBadge = document.getElementById("clearBadge");
     const clearOverlay = document.getElementById("clearOverlay");
 
-    let moves = 0;
     
     let clearShowTimer = null;
     const CLEAR_SHOW_DELAY = 900;   // 正解後、表示するまで(ms)
@@ -475,11 +489,6 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
       if(level === "easy")   return [1,5,10,50];
       if(level === "hard")   return [1,5,10,50,100,100,500,500];
       return [1,5,10,50,100,500];
-    }
-
-    function updateLevelChip(){
-      const v = levelSelect.value;
-      chipLevel.textContent = "むずかしさ：" + (v === "easy" ? "かんたん" : v === "hard" ? "むずかしい" : "ふつう");
     }
 
     function setImg(i, value){
@@ -531,14 +540,8 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
       }, CLEAR_SHOW_DELAY);
     }
 
-    function setMoves(n){
-      moves = n;
-      chipMoves.textContent = "タップ：" + moves + "回";
-    }
-
     function newPuzzle(){
-      updateLevelChip();
-      const level = levelSelect.value;
+      const level = selectedLevel;
 
       answer = Array.from({length:9}, () => randCoin(level));
       calcTargetsFromAnswer();
@@ -547,7 +550,6 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
       player = Array(9).fill(null);
       renderPlayer();
 
-      setMoves(0);
       resetClearUI();
     }
 
@@ -555,7 +557,6 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
       player = Array(9).fill(null);
       renderPlayer();
 
-      setMoves(0);
       resetClearUI();
     }
 
@@ -607,7 +608,6 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
       player[i] = nextValue(player[i]);
       setImg(i, player[i]);
 
-      setMoves(moves + 1);
       checkClear();
     }
 
@@ -633,8 +633,16 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
     document.getElementById("btnPlay").addEventListener("click", newPuzzle);
     document.getElementById("btnReset").addEventListener("click", resetPuzzle);
 
-    levelSelect.addEventListener("change", ()=>{
-      updateLevelChip();
+    document.querySelectorAll(".difficultyBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectedLevel = btn.dataset.level;
+        document.querySelectorAll(".difficultyBtn").forEach(item => {
+          const selected = item === btn;
+          item.classList.toggle("is-selected", selected);
+          item.setAttribute("aria-pressed", String(selected));
+        });
+        newPuzzle();
+      });
     });
 
     const gameView = document.getElementById("gameView");
@@ -654,9 +662,8 @@ button.backGameBtn {display:block; width:92%; margin:12px auto 16px; min-height:
       btnInfo.focus({preventScroll:true});
     });
 
-    updateLevelChip();
     renderPlayer();
-    setMoves(0);
+
   </script>
 </body>
 </html>
