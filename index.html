@@ -329,20 +329,18 @@ button.imgBtn:focus-visible{
 }
 
 
-/* ===== 新しいタイトル + 右端のinfoボタン ===== */
-.titleRow {
-  display: flex; align-items: center; gap: 8px; width:100%; margin: 4px 0 12px;
-}
-.newTitle {
-  display:block; width:0; min-width:0; flex:1 1 auto; height:auto; object-fit:contain;
-}
+/* ===== タイトル枠内のinfo（画像全体 + 透明な操作領域） ===== */
+.titleRow { position:relative; width:100%; margin:4px 0 12px; }
+.newTitle { display:block; width:100%; height:auto; }
 button.infoIcon {
-  flex:0 0 clamp(48px, 14vw, 68px) !important; width:clamp(48px, 14vw, 68px) !important;
-  height:clamp(48px, 14vw, 68px) !important; padding:0 !important;
-  background:transparent !important; border:0; box-shadow:none; border-radius:50%;
+  position:absolute; right:4.3%; top:18%;
+  width:17%; height:62%; min-height:0;
+  padding:0 !important; margin:0; display:block;
+  background:transparent !important; border:0;
+  border-radius:50%; box-shadow:none !important;
+  cursor:pointer; touch-action:manipulation;
 }
-button.infoIcon img {width:100%; height:100%; display:block; object-fit:contain;}
-
+button.infoIcon:focus-visible {outline:3px solid white; outline-offset:2px;}
 /* ===== 説明画面・日本語UI・Safari表示調整 ===== */
 [hidden] {display:none !important;}
 .statusbar {grid-template-columns:1fr; gap:10px;}
@@ -363,10 +361,8 @@ button.backGameBtn {display:block; width:100%; margin:12px auto 16px; min-height
   <div class="app">
     <main id="gameView">
     <div class="titleRow">
-      <img class="newTitle" src="images/coin_title.png" alt="PowerPoint Webアプリ コインパズル">
-      <button type="button" id="btnInfo" class="infoIcon" aria-label="この教材について・遊び方を開く">
-        <img src="images/info.png" alt="">
-      </button>
+      <img class="newTitle" src="images/coin_title_info.png" alt="PowerPoint Webアプリ コインパズル">
+      <button type="button" id="btnInfo" class="infoIcon" aria-label="この教材について・遊び方を開く"></button>
     </div>
 
     <div class="controls">
