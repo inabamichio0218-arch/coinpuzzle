@@ -474,7 +474,6 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
     const leftEls = [0,1,2].map(i => document.getElementById("tLeft"+i));
 
     let selectedLevel = "normal";
-    const clearBadge = document.getElementById("clearBadge");
     const clearOverlay = document.getElementById("clearOverlay");
 
     
@@ -523,7 +522,6 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
     }
 
     function resetClearUI(){
-      clearBadge.classList.remove("show");
       clearOverlay.classList.remove("show");
       clearOverlay.setAttribute("aria-hidden","true");
       if(clearShowTimer){ clearTimeout(clearShowTimer); clearShowTimer=null; }
@@ -594,11 +592,9 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
       const cleared = okTop && okLeft;
 
       if(cleared){
-        clearBadge.classList.add("show");
         showClearOverlayDelayed();
       }else{
-        clearBadge.classList.remove("show");
-        clearOverlay.classList.remove("show");
+          clearOverlay.classList.remove("show");
         clearOverlay.setAttribute("aria-hidden","true");
       }
       return cleared;
