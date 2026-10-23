@@ -286,6 +286,35 @@ button.imgBtn:focus-visible{
       font-size: 13px;
       opacity: .95;
     }
+    .playAgainBtn{
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px 14px;
+      font-size: clamp(14px, 4vw, 18px);
+      background: var(--btnBg);
+      color: var(--btnText);
+    }
+    .overlayCard{
+      width: min(350px, 88%);
+      max-height: 95%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .clearImg{
+      max-height: min(240px, 48vw);
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    /* ===== 開発時だけ使用するテストボタン（公開前に削除可能） ===== */
+    .testControls{ margin: 14px 0 4px; text-align:center; }
+    .testControls button{
+      width:100%; background:#fff1b8; color:#392d00;
+      border:2px dashed #8b6d00; font-size:15px;
+    }
 
     @media (max-width: 420px){
       .target{ font-size: 28px; }
@@ -341,11 +370,11 @@ button.imgBtn:focus-visible{
     </div>
 
     <div class="boardWrap">
-      <div class="overlay" id="clearOverlay" aria-hidden="true" title="クリック/タップで閉じる">
+      <div class="overlay" id="clearOverlay" aria-hidden="true">
         <div class="overlayCard">
           <!-- ★ ここが画像CLEAR -->
           <img src="images/clear.png" alt="CLEAR!" class="clearImg">
-          <div class="overlaySub">クリック/タップで閉じる</div>
+          <button id="btnPlayAgain" class="playAgainBtn" type="button">もう一度あそぶ</button>
         </div>
       </div>
 
@@ -375,6 +404,11 @@ button.imgBtn:focus-visible{
         <div class="cell"><div class="tile" role="button" tabindex="0" data-i="8"><img alt="" id="img8"></div></div>
       </div>
     </div>
+      <!-- ===== テスト専用：このブロックを削除するとボタンを非表示にできます ===== -->
+      <div class="testControls" id="testControls">
+        <button id="btnTestClear" type="button">🧪 テスト：やったー画面を表示</button>
+      </div>
+      <!-- ===== テスト専用ここまで ===== -->
       <footer class="copyright">
         © 2026 Michio Inaba / Coin Puzzle
         <span class="note">PowerPoint × Web App</span>
@@ -408,9 +442,7 @@ button.imgBtn:focus-visible{
     let moves = 0;
     
     let clearShowTimer = null;
-    let clearHideTimer = null;
-    const CLEAR_SHOW_DELAY = 900;   // 出てくるまで(ms)
-    const CLEAR_KEEP_TIME  = 2500;  // 表示保持(ms)
+    const CLEAR_SHOW_DELAY = 900;   // 正解後、表示するまで(ms)
     let player = Array(9).fill(null);
     let answer = Array(9).fill(1);
     let targetTop = [0,0,0];
@@ -463,7 +495,6 @@ button.imgBtn:focus-visible{
       clearOverlay.classList.remove("show");
       clearOverlay.setAttribute("aria-hidden","true");
       if(clearShowTimer){ clearTimeout(clearShowTimer); clearShowTimer=null; }
-      if(clearHideTimer){ clearTimeout(clearHideTimer); clearHideTimer=null; }
     }
 
     function showClearOverlayDelayed(){
@@ -472,13 +503,8 @@ button.imgBtn:focus-visible{
         clearOverlay.classList.add("show");
         clearOverlay.setAttribute("aria-hidden","false");
         clearShowTimer = null;
-
-        clearHideTimer = setTimeout(()=>{
-          clearOverlay.classList.remove("show");
-          clearOverlay.setAttribute("aria-hidden","true");
-          clearHideTimer = null;
-        }, CLEAR_KEEP_TIME);
-
+        // 「もう一度あそぶ」を押すまで表示を維持する。
+        document.getElementById("btnPlayAgain").focus();
       }, CLEAR_SHOW_DELAY);
     }
 
@@ -577,13 +603,18 @@ button.imgBtn:focus-visible{
       });
     });
 
-    // CLEARオーバーレイはクリック/タップで閉じる
-    clearOverlay.addEventListener("click", ()=>{
-      clearOverlay.classList.remove("show");
-      clearOverlay.setAttribute("aria-hidden","true");
-      if(clearShowTimer){ clearTimeout(clearShowTimer); clearShowTimer=null; }
-      if(clearHideTimer){ clearTimeout(clearHideTimer); clearHideTimer=null; }
+    // ===== テスト専用：正解せずにクリア画面を直接確認する =====
+    document.getElementById("btnTestClear").addEventListener("click", ()=>{
+      resetClearUI();
+      clearBadge.classList.add("show");
+      clearOverlay.classList.add("show");
+      clearOverlay.setAttribute("aria-hidden", "false");
+      document.getElementById("btnPlayAgain").focus();
     });
+    // ===== テスト専用ここまで =====
+
+    // クリア画面は自動で閉じず、ボタンから次の問題を開始する。
+    document.getElementById("btnPlayAgain").addEventListener("click", newPuzzle);
 
     document.getElementById("btnPlay").addEventListener("click", newPuzzle);
     document.getElementById("btnReset").addEventListener("click", resetPuzzle);
