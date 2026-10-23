@@ -335,11 +335,22 @@ button.imgBtn:focus-visible{
 }
 
 
+/* ===== 新しいタイトル + 右端のinfoボタン ===== */
+.titleRow {
+  display: flex; align-items: center; gap: 8px; width:100%; margin: 4px 0 12px;
+}
+.newTitle {
+  display:block; width:0; min-width:0; flex:1 1 auto; height:auto; object-fit:contain;
+}
+button.infoIcon {
+  flex:0 0 clamp(48px, 14vw, 68px) !important; width:clamp(48px, 14vw, 68px) !important;
+  height:clamp(48px, 14vw, 68px) !important; padding:0 !important;
+  background:transparent !important; border:0; box-shadow:none; border-radius:50%;
+}
+button.infoIcon img {width:100%; height:100%; display:block; object-fit:contain;}
+
 /* ===== 説明画面・日本語UI・Safari表示調整 ===== */
 [hidden] {display:none !important;}
-.infoLaunch {display:flex; justify-content:flex-end; margin:-5px 0 7px;}
-button.infoIcon { flex:0 0 auto; width:52px; height:52px; padding:3px; border-radius:50%; background:transparent; box-shadow:none; }
-.infoIcon img {display:block; width:100%; height:100%; object-fit:contain;}
 .statusbar {grid-template-columns:1fr; gap:10px;}
 .status-left {font-size:16px; font-weight:800; gap:8px;}
 .chip {padding:9px 11px; line-height:1.2;}
@@ -349,7 +360,7 @@ button.infoIcon { flex:0 0 auto; width:52px; height:52px; padding:3px; border-ra
 .aboutImage {display:block; width:100%; height:auto; border-radius:12px;}
 button.backGameBtn {display:block; width:100%; margin:12px auto 16px; min-height:60px; font-size:clamp(19px,5vw,25px); font-weight:900; color:white; background:linear-gradient(#2ce0e5,#00b8cb); border:2px solid #35f0ef; box-shadow:0 5px 10px rgba(0,0,0,.3);}
 #infoView {padding-bottom:env(safe-area-inset-bottom);}
-@media(max-width:420px) { .status-left {font-size:15px;} #levelSelect {font-size:19px;} .infoLaunch button.infoIcon {width:46px;height:46px;} }
+@media(max-width:420px) { .status-left {font-size:15px;} #levelSelect {font-size:19px;} }
 
   </style>
 </head>
@@ -357,11 +368,12 @@ button.backGameBtn {display:block; width:100%; margin:12px auto 16px; min-height
 <body>
   <div class="app">
     <main id="gameView">
-    <div class="header">
-      <img src="images/header.png" alt="Coin Puzzle header">
+    <div class="titleRow">
+      <img class="newTitle" src="images/coin_title.png" alt="PowerPoint Webアプリ コインパズル">
+      <button type="button" id="btnInfo" class="infoIcon" aria-label="この教材について・遊び方を開く">
+        <img src="images/info.png" alt="">
+      </button>
     </div>
-
-    <div class="infoLaunch"><button type="button" id="btnInfo" class="infoIcon" aria-label="この教材について・遊び方を開く"><img src="images/info.png" alt=""></button></div>
 
     <div class="controls">
   <button id="btnPlay" type="button" class="imgBtn" aria-label="Play">
@@ -436,7 +448,7 @@ button.backGameBtn {display:block; width:100%; margin:12px auto 16px; min-height
 
 </main>
     <section id="infoView" hidden aria-label="この教材について・遊び方・利用について">
-      <img class="aboutImage" src="images/coin_info.jpg" alt="この教材を作った人、学び方・遊び方、利用について、著作権表示">
+      <img class="aboutImage" src="images/coin_info.png" alt="この教材を作った人、学び方・遊び方、利用について、著作権表示">
       <button type="button" id="btnBackGame" class="backGameBtn">← ゲームにもどる</button>
     </section>
 </div>
