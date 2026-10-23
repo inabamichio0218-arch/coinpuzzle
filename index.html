@@ -309,12 +309,6 @@ button.imgBtn:focus-visible{
       object-fit: contain;
     }
 
-    /* ===== 開発時だけ使用するテストボタン（公開前に削除可能） ===== */
-    .testControls{ margin: 14px 0 4px; text-align:center; }
-    .testControls button{
-      width:100%; background:#fff1b8; color:#392d00;
-      border:2px dashed #8b6d00; font-size:15px;
-    }
 
     @media (max-width: 420px){
       .target{ font-size: 28px; }
@@ -436,11 +430,6 @@ button.backGameBtn {display:block; width:100%; margin:12px auto 16px; min-height
         <div class="cell"><div class="tile" role="button" tabindex="0" data-i="8"><img alt="" id="img8"></div></div>
       </div>
     </div>
-      <!-- ===== テスト専用：このブロックを削除するとボタンを非表示にできます ===== -->
-      <div class="testControls" id="testControls">
-        <button id="btnTestClear" type="button">🧪 テスト：やったー画面を表示</button>
-      </div>
-      <!-- ===== テスト専用ここまで ===== -->
       <footer class="copyright">
         © 2026 Michio Inaba / Coin Puzzle
         <span class="note">PowerPoint × Web App</span>
@@ -640,15 +629,6 @@ button.backGameBtn {display:block; width:100%; margin:12px auto 16px; min-height
       });
     });
 
-    // ===== テスト専用：正解せずにクリア画面を直接確認する =====
-    document.getElementById("btnTestClear").addEventListener("click", ()=>{
-      resetClearUI();
-      clearBadge.classList.add("show");
-      clearOverlay.classList.add("show");
-      clearOverlay.setAttribute("aria-hidden", "false");
-      document.getElementById("btnPlayAgain").focus();
-    });
-    // ===== テスト専用ここまで =====
 
     // クリア画面は自動で閉じず、ボタンから次の問題を開始する。
     document.getElementById("btnPlayAgain").addEventListener("click", newPuzzle);
