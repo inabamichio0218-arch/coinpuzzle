@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Coin Puzzle</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="コインパズル">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
   <style>
     :root{
@@ -416,6 +419,19 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
   button.difficultyBtn { font-size:clamp(16px,4.8vw,19px); min-height:57px; border-radius:9px; }
 }
 
+  
+/* Facebookなどのアプリ内ブラウザ：盤面の指操作でページが移動しないようにする。
+   説明画面と、画面が小さい端末での縦スクロールは残す。 */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
+}
+#gameView .boardWrap, #gameView .boardWrap * {
+  touch-action: none;
+}
+
   </style>
 </head>
 
@@ -693,6 +709,13 @@ button.difficultyBtn:focus-visible { outline:3px solid #fff; outline-offset:4px;
       window.scrollTo(0, 0);
       btnInfo.focus({preventScroll:true});
     });
+
+
+    // SNSアプリ内ブラウザでは、コイン盤面の一本指操作だけページ移動を抑制する。
+    // click・キーボード操作・説明画面のスクロールは変更しない。
+    document.querySelector('#gameView .boardWrap').addEventListener('touchmove', function(event) {
+      if (event.touches.length === 1 && event.cancelable) event.preventDefault();
+    }, {passive:false});
 
     renderPlayer();
 
